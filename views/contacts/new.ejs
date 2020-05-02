@@ -8,7 +8,7 @@
 
     <div class='contact contact-new'>
         <h2>New</h2>
-        <form action='/contacts' method='post' class='contact-form' onsubmit='return valueCheck();'>
+        <form action='/contacts' method='post' class='contact-form'>
             <div>
                 <label for='name'>Name</label>
                 <input type='text' id='name' name='name'>
@@ -25,18 +25,4 @@
         </form>
     </div>
 </body>
-
-<script>
-    function valueCheck(){
-        var name = document.querySelector("#name");
-        var email = document.querySelector("#email");
-        var phone = document.querySelector("#phone");
-        
-        if(name.value == ''){
-            alert('Name 입력요망')
-            return false;
-        }
-
-    }
-</script>
 </html>

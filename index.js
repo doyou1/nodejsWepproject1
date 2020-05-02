@@ -1,21 +1,21 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
-
+var methodOverride = require('method-override');
 var app = express();
 
 // DB setting
-mongoose.set('useNewUrlParser', true);    // 1
-mongoose.set('useFindAndModify', false);  // 1
-mongoose.set('useCreateIndex', true);     // 1
-mongoose.set('useUnifiedTopology', true); // 1
-mongoose.connect(process.env.MONGO_DB); // 2
-var db = mongoose.connection; //3
+mongoose.set('useNewUrlParser', true);   
+mongoose.set('useFindAndModify', false); 
+mongoose.set('useCreateIndex', true);    
+mongoose.set('useUnifiedTopology', true);
+mongoose.connect(process.env.MONGO_DB); 
+var db = mongoose.connection; 
 
 db.once('open', function(){
   console.log('DB connected');
 });
-//5
+
 db.on('error', function(err){
   console.log('DB ERROR : ', err);
 });
@@ -25,37 +25,11 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname+'/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
+app.use(methodOverride('_method'));
 
-
-
-var contactSchema = mongoose.Schema({
-    name : {type:String, required:true, unique:true},
-    email : {type:String},
-    phone : {type:String}
-});
-var Contact = mongoose.model('contact',contactSchema);
-
-app.get('/',function(req,res){
-    res.redirect('/contacts');
-});
-
-app.get('/contacts',function(req,res){
-    Contact.find({},function(err,contacts){
-        if(err) return res.json(err);
-        res.render('contacts/index',{contacts:contacts});
-    });
-});
-
-app.get('/contacts/new',function(req,res){
-    res.render('contacts/new');
-});
-
-app.post('/contacts',function(req, res){
-    Contact.create(req.body,function(err,contact){
-        if(err) return res.json(err);
-        res.redirect('/contacts');
-    });
-});
+// Routes
+app.use('/', require('./routes/home'));
+app.use('/contacts', require('./routes/contacts'));
 
 // Port setting
 var port = 3000;
